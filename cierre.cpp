@@ -58,7 +58,7 @@ int cargarDia(const char nombreArchivo[], Comanda *&comandas, int &len)
     Comanda comanda;
     bool valido = true;
     size_t bytesLeidos;
-    // Leemos un registro por vez. La cantidad de bytes permite detectar uno incompleto.
+    
     while ((bytesLeidos = fread(&comanda, 1, sizeof(Comanda), archivo)) == sizeof(Comanda))
     {
         if (len > 0 && comandas[len - 1].idMozo > comanda.idMozo)
@@ -68,7 +68,6 @@ int cargarDia(const char nombreArchivo[], Comanda *&comandas, int &len)
         }
         if (len == capacidad)
         {
-            // Duplicamos el espacio solo cuando el arreglo se llena.
             int nuevaCapacidad = capacidad * 2;
             Comanda *ampliadas = new Comanda[nuevaCapacidad];
             for (int i = 0; i < len; i++)
@@ -86,7 +85,7 @@ int cargarDia(const char nombreArchivo[], Comanda *&comandas, int &len)
 
     if (!valido || errorLectura || bytesLeidos != 0)
     {
-        mostradorDetexto('e', "No se pudo leer" + string(nombreArchivo) + ".");
+        mostradorDetexto('e', "No se pudo leer " + string(nombreArchivo) + ".");
 
         delete[] comandas;
         comandas = nullptr;
@@ -101,7 +100,7 @@ bool guardarSemana(const char nombreArchivo[], const Comanda comandas[], int len
     FILE *archivo = fopen(nombreArchivo, "wb");
     if (archivo == nullptr)
     {
-        mostradorDetexto('e', "No se pudo crear" + string(nombreArchivo) + ".");
+        mostradorDetexto('e', "No se pudo crear " + string(nombreArchivo) + ".");
         return false;
     }
 
@@ -141,11 +140,11 @@ int main()
         return 1;
     }
 
-    mostradorDetexto('t', "Ingrese el año: ");
+    mostradorDetexto('t', "Ingrese el ano: ");
     if (!(cin >> anio) || semana < 1 || semana > 5 ||
         mes < 1 || mes > 12 || anio < 1 || anio > 9999)
     {
-        mostradorDetexto('e', " Semana, mes o año invalido.");
+        mostradorDetexto('e', " Semana, mes o ano invalido.");
         return 1;
     }
 
@@ -168,7 +167,6 @@ int main()
 
     for (int dia = primerDia; dia <= ultimoDia; dia++)
     {
-        // Intentamos leer cada dia; cargarDia devuelve 0 si el archivo no existe.
         char nombreDia[80];
         nombrePlanillaDia(dia, mes, anio, nombreDia);
         Comanda *comandasDia;
@@ -184,7 +182,7 @@ int main()
             continue;
         }
         diasEncontrados++;
-        // Ambos arreglos ya estan ordenados: el apareo conserva ese orden.
+
         Comanda *combinadas = new Comanda[lenSemana + lenDia];
         int lenCombinadas;
         apareoGenerico(comandasSemana, lenSemana, comandasDia, lenDia,
@@ -216,10 +214,6 @@ int main()
     bool guardado = guardarSemana(nombreSemana.c_str(), comandasSemana, lenSemana);
     delete[] comandasSemana;
 
-    if (!guardado)
-    {
-        return 1;
-    }
     if (!guardado)
     {
         return 1;
